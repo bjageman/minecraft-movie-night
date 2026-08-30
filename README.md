@@ -139,12 +139,29 @@ Check that the configured signs and displays change. If an update fails, inspect
 
 ## Run the updater with systemd
 
-1. Edit `minecraft-now-playing.service` and replace the example `User`, `WorkingDirectory`, and `ExecStart` values with the account and absolute repository path on your server.
+1. Create `/etc/systemd/system/minecraft-now-playing.service` with the following content. Replace `YOUR_USER` and both `/absolute/path/to/minecraft-movie-night` values for your server:
 
-2. Install and start the unit:
+   ```ini
+   [Unit]
+   Description=Minecraft Now Playing Board Updater
+   After=docker.service
+   Requires=docker.service
+
+   [Service]
+   Type=simple
+   User=YOUR_USER
+   WorkingDirectory=/absolute/path/to/minecraft-movie-night
+   ExecStart=/absolute/path/to/minecraft-movie-night/update_now_playing.py
+   Restart=always
+   RestartSec=10
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+2. Reload systemd and start the unit:
 
    ```bash
-   sudo cp minecraft-now-playing.service /etc/systemd/system/
    sudo systemctl daemon-reload
    sudo systemctl enable --now minecraft-now-playing.service
    ```

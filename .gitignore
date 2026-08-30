@@ -9,6 +9,9 @@ data/
 # Generated updater state
 now_playing_state.json
 
+# Host-specific systemd unit; installation is documented in README.md
+minecraft-now-playing.service
+
 # Python caches and local tooling
 __pycache__/
 *.py[cod]

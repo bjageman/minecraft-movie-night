@@ -10,55 +10,45 @@ A Fabric Minecraft 1.21.1 server running [PixelReel](https://github.com/Samarth-
 - Python 3.9 or newer for the now-playing updater
 - A Minecraft Java Edition 1.21.1 client with Fabric Loader, Fabric API, and PixelReel installed
 
-## Install the Minecraft server
+## Quick install
 
-1. Clone the repository and enter it:
+Clone the repository and run the installer:
 
-   ```bash
-   git clone https://github.com/bjageman/minecraft-movie-night.git
-   cd minecraft-movie-night
-   ```
+```bash
+git clone https://github.com/bjageman/minecraft-movie-night.git
+cd minecraft-movie-night
+./install.sh
+```
 
-2. Create the environment file:
+The installer prompts for the domain and Let's Encrypt email, installs sanitized configuration templates, downloads the theater world, creates the `nginx-proxy` Docker network if needed, and starts Minecraft.
 
-   ```bash
-   cp .env.example .env
-   ```
+To also install the continuous now-playing updater as a systemd service:
 
-   Edit `.env` and set:
+```bash
+./install.sh --install-service
+```
 
-   ```dotenv
-   DOMAIN=example.com
-   EMAIL=admin@example.com
-   ```
+The script is safe to rerun: it keeps existing environment, configuration, and world files.
 
-3. The Compose file expects an external Docker network named `nginx-proxy`. Create it if needed:
-
-   ```bash
-   docker network create nginx-proxy
-   ```
-
-   If you do not use a Docker reverse proxy, remove the `VIRTUAL_HOST`, `VIRTUAL_PORT`, and `LETSENCRYPT_*` entries from `docker-compose.yml`. You can also replace the external network with your preferred network.
-
-4. Review `docker-compose.yml` before starting. In particular:
-
-   - Change the players listed under `RCON_CMDS_STARTUP`.
-   - Change the exposed ports if `25565` or `25569` are already in use.
-   - Adjust `MEMORY` for your host.
-
-5. Start the server:
-
-   ```bash
-   docker compose up -d
-   ```
-
-6. Follow the startup log until Minecraft reports that it is ready:
-
-   ```bash
-   docker compose logs -f mc
-   ```
+Before starting, review `docker-compose.yml` if you need to change the operator names, memory limit, ports, reverse-proxy settings, or Docker network.
 
 Minecraft creates its world, generated configuration, credentials, and logs under `data/`. That directory is intentionally excluded from Git.
+
+## Install the included world
+
+The world is distributed as a GitHub release asset instead of being committed directly. Minecraft region files change during normal play; keeping them out of Git avoids a dirty working tree and rapidly growing binary history.
+
+The installer downloads and extracts it automatically. For a manual installation, stop Minecraft before replacing the world:
+
+```bash
+docker compose down
+curl -LO https://github.com/bjageman/minecraft-movie-night/releases/latest/download/minecraft-movie-night-world.tar.gz
+mkdir -p data
+tar -xzf minecraft-movie-night-world.tar.gz -C data
+rm minecraft-movie-night-world.tar.gz
+```
+
+The archive excludes player inventories, player locations, advancements, statistics, and session locks. The constructed world, entities, datapacks, dimensions, and world settings are included.
 
 ## Configure PixelReel
 
@@ -66,6 +56,14 @@ After the first server start, edit:
 
 ```text
 data/config/pixelreel.json
+```
+
+Sanitized server and PixelReel templates are available under `examples/`. To use them as a starting point:
+
+```bash
+mkdir -p data/config
+cp examples/server.properties data/server.properties
+cp examples/pixelreel.json data/config/pixelreel.json
 ```
 
 Set the ErsatzTV endpoints and public media-proxy address for your environment. For example:

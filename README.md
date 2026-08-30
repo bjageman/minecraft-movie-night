@@ -5,6 +5,7 @@ A Fabric Minecraft 1.21.1 server running [PixelReel](https://github.com/Samarth-
 ## What you need
 
 - Docker Engine with the Compose plugin
+- GitHub CLI (`gh`), authenticated to access this private repository and its world release
 - An existing ErsatzTV server and XMLTV feed
 - A reverse proxy if players outside your network will use the PixelReel media proxy
 - Python 3.9 or newer for the now-playing updater
@@ -42,8 +43,8 @@ The installer downloads and extracts it automatically. For a manual installation
 
 ```bash
 docker compose down
-curl -LO https://github.com/bjageman/minecraft-movie-night/releases/latest/download/minecraft-movie-night-world.tar.gz
 mkdir -p data
+gh release download --repo bjageman/minecraft-movie-night --pattern minecraft-movie-night-world.tar.gz
 tar -xzf minecraft-movie-night-world.tar.gz -C data
 rm minecraft-movie-night-world.tar.gz
 ```

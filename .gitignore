@@ -1,0 +1,27 @@
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+
+# Minecraft runtime, saves, logs, generated configuration, and credentials
+data/
+
+# Generated updater state
+now_playing_state.json
+
+# Python caches and local tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+
+# Downloaded archives and Java binaries
+*.jar
+*.zip
+
+# Editor and operating-system files
+.DS_Store
+.idea/
+.vscode/
+*~

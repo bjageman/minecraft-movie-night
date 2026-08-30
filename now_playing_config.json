@@ -1,0 +1,44 @@
+{
+    "ersatztv_url": "http://localhost:8409",
+    "minecraft_container": "minecraft-pixelreel",
+    "update_interval_seconds": 15,
+    "enable_scoreboard": false,
+    "scoreboard_objective": "now_playing",
+    "scoreboard_title": "§e§lNow Playing",
+    "scoreboard_channels": [],
+    "enable_signs": true,
+    "signs": [
+        {
+            "channel_number": 1,
+            "x": -1056,
+            "y": 93,
+            "z": 780,
+            "dimension": "minecraft:overworld",
+            "description": "Lobby All Movies Sign"
+        }
+    ],
+    "enable_text_displays": true,
+    "text_displays": [
+        {
+            "channel_number": 1,
+            "tag": "now_playing_chan_1",
+            "description": "Lobby Large Display"
+        },
+        {
+            "channel_number": 16,
+            "tag": "now_playing_chan_16",
+            "description": "Tim Curry Display"
+        }
+    ],
+    "enable_schedule_displays": true,
+    "schedule_displays": [
+        {
+            "channels": [
+                1,
+                16
+            ],
+            "tag": "single_schedule_board",
+            "description": "Stacked Schedule Board for Movie Channel and Tim Curry Channel"
+        }
+    ]
+}

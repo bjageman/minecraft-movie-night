@@ -1,0 +1,31 @@
+services:
+  mc:
+    image: itzg/minecraft-server:latest
+    container_name: minecraft-pixelreel
+    tty: true
+    stdin_open: true
+    ports:
+      - "25565:25565"        # Minecraft Java
+      - "25569:25567"        # PixelReel Media Proxy
+    environment:
+      EULA: "TRUE"
+      TYPE: "FABRIC"
+      VERSION: "1.21.1"
+      MEMORY: "4G"
+      VIRTUAL_HOST: mcmovie.${DOMAIN}
+      VIRTUAL_PORT: 25567
+      LETSENCRYPT_HOST: mcmovie.${DOMAIN}
+      LETSENCRYPT_EMAIL: ${EMAIL}
+      # Download Fabric API and PixelReel mod automatically on startup
+      MODS: |
+        https://cdn.modrinth.com/data/P7dR8mSH/versions/Nlt8gI9z/fabric-api-0.116.15%2B1.21.1.jar
+        https://github.com/Samarth-programming/PixelReel/releases/download/v2.00-mc1.21.1/pixelreel-2.0.0.jar
+      RCON_CMDS_STARTUP: |-
+        /op neurobomber
+        /op neurosoft
+    volumes:
+      - "./data:/data"
+networks:
+  default:
+    name: nginx-proxy
+    external: true

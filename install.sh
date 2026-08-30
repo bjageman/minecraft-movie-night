@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-REPOSITORY="bjageman/minecraft-movie-night"
 WORLD_ARCHIVE="minecraft-movie-night-world.tar.gz"
+WORLD_URL="https://github.com/bjageman/minecraft-movie-night/releases/latest/download/$WORLD_ARCHIVE"
 INSTALL_SERVICE=false
 
 usage() {
@@ -29,7 +29,7 @@ for argument in "$@"; do
     esac
 done
 
-for command in docker gh tar; do
+for command in curl docker tar; do
     if ! command -v "$command" >/dev/null 2>&1; then
         echo "Required command not found: $command" >&2
         exit 1
@@ -47,6 +47,7 @@ cd "$SCRIPT_DIR"
 if [ ! -f .env ]; then
     domain_value=${DOMAIN:-}
     email_value=${EMAIL:-}
+    operators_value=${MINECRAFT_OPS:-}
 
     if [ -z "$domain_value" ]; then
         read -r -p "Public domain (for example, example.com): " domain_value
@@ -54,12 +55,16 @@ if [ ! -f .env ]; then
     if [ -z "$email_value" ]; then
         read -r -p "Let's Encrypt email: " email_value
     fi
+    if [ -z "$operators_value" ]; then
+        read -r -p "Minecraft operator usernames (comma-separated, optional): " operators_value
+    fi
     if [ -z "$domain_value" ] || [ -z "$email_value" ]; then
         echo "Domain and email cannot be empty." >&2
         exit 1
     fi
 
-    printf 'DOMAIN=%s\nEMAIL=%s\n' "$domain_value" "$email_value" >.env
+    printf 'DOMAIN=%s\nEMAIL=%s\nMINECRAFT_OPS=%s\n' \
+        "$domain_value" "$email_value" "$operators_value" >.env
     chmod 600 .env
     echo "Created .env."
 else
@@ -85,7 +90,8 @@ fi
 if [ ! -e data/world ]; then
     download_dir=$(mktemp -d /tmp/minecraft-movie-night.XXXXXX)
     trap 'rm -rf -- "$download_dir"' EXIT
-    gh release download --repo "$REPOSITORY" --pattern "$WORLD_ARCHIVE" --dir "$download_dir"
+    curl --fail --location --show-error \
+        --output "$download_dir/$WORLD_ARCHIVE" "$WORLD_URL"
     tar -xzf "$download_dir/$WORLD_ARCHIVE" -C data
     echo "Installed the theater world."
     rm -rf -- "$download_dir"

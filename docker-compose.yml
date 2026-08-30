@@ -20,9 +20,7 @@ services:
       MODS: |
         https://cdn.modrinth.com/data/P7dR8mSH/versions/Nlt8gI9z/fabric-api-0.116.15%2B1.21.1.jar
         https://github.com/Samarth-programming/PixelReel/releases/download/v2.00-mc1.21.1/pixelreel-2.0.0.jar
-      RCON_CMDS_STARTUP: |-
-        /op neurobomber
-        /op neurosoft
+      OPS: ${MINECRAFT_OPS:-}
     volumes:
       - "./data:/data"
 networks:
